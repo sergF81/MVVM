@@ -2,6 +2,8 @@ package com.example.recycleviewtask.presentation
 
 //import android.app.Fragment
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +17,6 @@ import com.example.recycleviewtask.data.ItemFlower
 import com.example.recycleviewtask.databinding.FragmentListBinding
 
 private const val ERROR_MESSAGE = "Не могу добавить элемент, так как поле пустое"
-private const val NO_IMAGE_FLOWER =
-    "https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/1242803/under-construction-sign-clipart-xl.png"
 
 class ListFragment : Fragment() {
 
@@ -55,14 +55,44 @@ class ListFragment : Fragment() {
         binding.listItemRecycle.layoutManager = LinearLayoutManager(requireContext())
         binding.listItemRecycle.adapter = adapter
 
+
+
+        binding.textInputItem.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                binding.buttonAddItem.isEnabled = true
+            }
+        })
         fun showToast(message: String) {
             Toast.makeText(
                 requireActivity(), message, Toast.LENGTH_SHORT
             ).show()
         }
 
+        binding.buttonAddItem.setOnClickListener {
+            val flowerName = binding.textInputItem.text.toString()
+            if (flowerName.isBlank()) {
+                Toast.makeText(context, "empty content", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+
+            }
+            flowerViewModel.addFlower(flowerName)
+            adapter.notifyDataSetChanged()
+            binding.textInputItem.setText("")
+            binding.textInputItem.clearFocus()
+            binding.buttonAddItem.isEnabled = false
+        }
+
         getAllFlower()
     }
+
+
 
     private fun getAllFlower() {
         //получение списка цветков

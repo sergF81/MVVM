@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 
 class FlowerRepositoryInMemoryImpl: FlowerRepository {
 
-
+    private val NO_IMAGE_FLOWER = "https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/1242803/under-construction-sign-clipart-xl.png"
 
         // сохраняем в памяти состояние списка
 
         private var nextId = 0
 
-        private val flowers = listOf(
+        private var flowers = listOf(
             ItemFlower(
                 id = nextId++,
                 name = "Роза",
@@ -64,6 +64,15 @@ class FlowerRepositoryInMemoryImpl: FlowerRepository {
         private val data = MutableLiveData(flowers)
 
         override fun get(): LiveData<List<ItemFlower>> = data
+
+    override fun addFlower(flower: ItemFlower) {
+        flowers = flowers +  listOf(
+            flower.copy(
+                id = nextId++, name = flower.name, imageFlower = NO_IMAGE_FLOWER
+            )
+        )
+      data.value = flowers
+    }
 
 }
 
