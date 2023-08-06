@@ -16,7 +16,8 @@ import com.squareup.picasso.Picasso
 //    ListAdapter<ItemFlower, RecycleViewItemAdapter.ItemHolder>(FlowerDiffCallback()) {
 
 class RecycleViewItemAdapter(
-    private var dataSet: MutableList<ItemFlower>
+    private var dataSet: MutableList<ItemFlower>,
+    private var myListener: MyListener
 ) : RecyclerView.Adapter<RecycleViewItemAdapter.ItemHolder>() {
 
     class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -40,6 +41,9 @@ class RecycleViewItemAdapter(
 
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
         holder.bind(dataSet[position])
+        holder.itemView.setOnClickListener {
+            myListener.myClick(dataSet, position)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -53,6 +57,10 @@ class RecycleViewItemAdapter(
     fun updateItems(list: MutableList<ItemFlower>) {
         dataSet = list
         notifyItemRangeInserted(0, list.size)
+    }
+
+    interface MyListener {
+        fun myClick(userArray: MutableList<ItemFlower>, position: Int)
     }
 
 }

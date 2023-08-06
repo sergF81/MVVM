@@ -37,8 +37,16 @@ class ListFragment : Fragment() {
      */
 
     val flowerViewModel: FlowerViewModel by viewModels()
+
     private val adapter =
-        RecycleViewItemAdapter(flowers)
+        RecycleViewItemAdapter(flowers, object : RecycleViewItemAdapter.MyListener {
+            override fun myClick(flowerArray: MutableList<ItemFlower>, position: Int) {
+                positionItem = position
+                flowers = flowerArray
+                flower = flowerArray[positionItem]
+                binding.buttonDeleteItem.isEnabled = true
+            }
+        })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +74,9 @@ class ListFragment : Fragment() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                binding.buttonAddItem.isEnabled = true
+                if (p0.isNullOrEmpty()) {
+                    binding.buttonAddItem.isEnabled = false
+                } else binding.buttonAddItem.isEnabled = true
             }
         })
         fun showToast(message: String) {
@@ -88,10 +98,15 @@ class ListFragment : Fragment() {
             binding.textInputItem.clearFocus()
             binding.buttonAddItem.isEnabled = false
         }
+        binding.buttonDeleteItem.setOnClickListener {
 
+            flowerViewModel.delFlower(positionItem)
+            adapter.notifyDataSetChanged()
+            binding.buttonDeleteItem.isEnabled = false
+
+        }
         getAllFlower()
     }
-
 
 
     private fun getAllFlower() {
