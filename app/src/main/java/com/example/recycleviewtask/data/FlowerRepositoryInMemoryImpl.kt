@@ -67,25 +67,20 @@ class FlowerRepositoryInMemoryImpl : FlowerRepository {
     override fun get() = data
 
     override fun addFlower(flowerName: String) {
-        val flower = ItemFlower(0,"","")
-        flowers = flowers + listOf(
-            flower.copy(
-                id = flowers.size + 1, name = flowerName, imageFlower = NO_IMAGE_FLOWER
-            )
-        )
+        val flower = ItemFlower(flowers.size + 1,flowerName,NO_IMAGE_FLOWER)
+        flowers = flowers.plus(flower)
+
         _data.value = flowers
     }
 
     override fun deleteFlower(id: Int) {
         val flowers1 = flowers.filter { it.id < id + 1 }
-        val flowers2 = mutableListOf<ItemFlower>()
-
-
-        for (i in flowers[id + 1].id..flowers.size) {
-            val flower = flowers[i - 1].copy(id = i - 1)
-            flowers2 += flower
+        val flowers2 = flowers.filter { it.id > id + 1 }
+        for (i in 0 until flowers2.size) {
+            flowers2[i].id = flowers2[i].id - 1
         }
-        flowers = flowers1 + flowers2
+        flowers = flowers1.plus(flowers2)
+
         _data.value = flowers
     }
 
