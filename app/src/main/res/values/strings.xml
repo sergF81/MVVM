@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">RecycleViewTask</string>
     <!-- TODO: Remove or change this placeholder text -->
-
     <string name="buttonAddItem">Add Item</string>
     <string name="buttonDeleteItem">Del Item</string>
     <string name="textInputItem"></string>
+    <string name="buttonGo">GO!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="textInfoFlower">Hello blank fragment</string>
+    <string name="textNameTextTypeView">name of flower</string>
 </resources>

@@ -11,10 +11,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.recycleviewtask.data.ChosenFlower
 import com.example.recycleviewtask.data.ItemFlower
 import com.example.recycleviewtask.databinding.FragmentListBinding
+
 
 private const val ERROR_MESSAGE = "Не могу добавить элемент, так как поле пустое"
 
@@ -37,8 +40,34 @@ class ListFragment : Fragment() {
      */
 
     val flowerViewModel: FlowerViewModel by viewModels()
+
     private val adapter =
-        RecycleViewItemAdapter(flowers)
+        RecycleViewItemAdapter(flowers, object : RecycleViewItemAdapter.MyListener {
+            override fun myClick(flowerArray: MutableList<ItemFlower>, position: Int) {
+
+                positionItem = position
+                flower = flowerArray[positionItem]
+                val imageOneFlower = flower.resourceImageFlower
+                val descriptionOneFlower = flower.descriptionFlower
+                val chosenFlower = ChosenFlower().apply {
+                    sourceImageFlower = imageOneFlower
+                    descriptionFlower = descriptionOneFlower
+                }
+                binding.buttonDeleteItem.isEnabled = true
+                if(imageOneFlower.equals(null)) {
+                    binding.buttonDeleteItem.isEnabled = true
+
+                } else {
+                    //создание action для передачи параметров во фрагмент InfoFlowerFragment
+                    val action =
+                        ListFragmentDirections.actionListFragmentToInfoFlowerFragment(chosenFlower)
+
+                    // передача самого action через navController
+                    findNavController().navigate(action)
+                    //  binding.listItemRecycle.background = ic_launcher_foreground
+                }
+            }
+        })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +95,9 @@ class ListFragment : Fragment() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                binding.buttonAddItem.isEnabled = true
+                if(p0.isNullOrEmpty()) {
+                    binding.buttonAddItem.isEnabled = false
+                } else binding.buttonAddItem.isEnabled = true
             }
         })
         fun showToast(message: String) {
@@ -88,7 +119,21 @@ class ListFragment : Fragment() {
             binding.textInputItem.clearFocus()
             binding.buttonAddItem.isEnabled = false
         }
+        binding.buttonDeleteItem.setOnClickListener {
 
+          //    adapter.notifyItemRemoved(positionItem)
+            flowerViewModel.delFlower(positionItem)
+
+//            for (i in flower.id..flowers.size) {
+//                flowers[i - 1].id = i
+//
+//            }
+              //  adapter.notifyItemRangeChanged(positionItem-1, flowers.size)
+            adapter.notifyDataSetChanged()
+           // adapter.notifyItemRemoved(positionItem)
+            binding.buttonDeleteItem.isEnabled = false
+         //   getAllFlower()
+        }
         getAllFlower()
     }
 
@@ -103,5 +148,3 @@ class ListFragment : Fragment() {
             })
     }
 }
-
-
