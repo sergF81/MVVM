@@ -1,7 +1,9 @@
 package com.example.recycleviewtask.data
 
 data class ItemFlower(
-    var id: Int,
+    val id: Int,
     val name: String,
-    val imageFlower: String
+    val descriptionFlower: String?,
+    val resourceImageFlower: String?,
+    val itemDifferentHolder: ItemViewType
 )
